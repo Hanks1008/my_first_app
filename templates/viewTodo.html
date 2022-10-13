@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {{headerWords}}
+        </title>
+    </head>
+<center>
+
+    <body>
+    <h1>{{titleWords}}</h1>
+    <p><b><i>{{instructWords}}</i></b></p>
+    <form action="/checkedToDo", method="GET">
+        {% for event in entryList %}
+        {% if event[2] == 0 %}
+        <p>{{event[0]}}</p><br>
+        {% endfor %}
+
+        <p>Check the ones that you have done below:</p>
+        <select name="ID">
+        {% for event in entryList %}
+            <option value={{event[1]}}>{{event[0]}}<br><br>
+        {% endfor %}
+        </select>
+
+
+        <input type="submit" value="Done!"> <br><br>
+    </form>
+    </body>
+
+
+    <a href="/Info?Year={{todayYear}}&Month={{todayMonth}}&Day={{todayDay}}">View Today's List!</a>
+    <br>
+    <a href="/">Back to home page</a>
+
+</center>
+</html>

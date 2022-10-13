@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<center>
+    <head>
+        <title>Create New Event</title>
+    </head>
+    <body>
+        <h1>Create New Event</h1>
+        <form action="/saved" method="GET">
+            <label for="Year"><b>Year</b></label>
+            <select name="Year">
+
+                <option disabled>Year</option>
+                {% for yearnum in futureYearList %}
+                <option>{{yearnum}}</option>
+                {%endfor%}
+
+            </select>
+            <br>
+            <br>
+
+            <label for="Month"><b>Month</b></label>
+            <select name="Month">
+                <option disabled>Month</option>
+                {% for monthnum in monthList %}
+                <option>{{monthnum}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+
+
+            <label for="Day"><b>Day</b></label>
+            <select name="Day">
+                <option disabled>Day</option>
+                {% for daynum in dayList %}
+                <option>{{daynum}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+
+            <label for="Event"><b>To-Do Event</b></label>
+            <input name="Event" type=text placeholder="What to do?" required> <br><br>
+
+            <input type=submit value="Save Todo!">
+        </form>
+
+    </body>
+</center>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<center>
+    <head>
+        <title>View Past Events</title>
+    </head>
+    <body>
+        <h1>View Past Todos</h1>
+        <form action="/Info" method="get">
+            <label for="Year"><b>Year</b></label>
+            <select name="Year" required>
+                <option disabled>Year</option>
+                {% for yearnum in pastYearList %}
+                <option>{{yearnum}}</option>
+                {%endfor%}
+            </select>
+            <br>
+            <br>
+
+            <label for="Month"><b>Month</b></label>
+            <select name="Month" required>
+                <option disabled>Month</option>
+                {% for monthnum in monthList %}
+                <option>{{monthnum}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+
+
+            <label for="Day"><b>Day</b></label>
+            <select name="Day" required>
+                <option disabled>Day</option>
+                {% for daynum in dayList %}
+                <option>{{daynum}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+
+            <input type=submit value="View!">
+        </form>
+
+    </body>
+</center>
+</html>

@@ -10,22 +10,39 @@
     <body>
     <h1>{{titleWords}}</h1>
     <p><b><i>{{instructWords}}</i></b></p>
+
+    <style>table, th, td {border:1px solid black;}</style>
+    <table width="50%">
+        <tr style="font-size: 20px">
+            <th style="font-style: italic">Status</th>
+            <th style="font-style: italic">Event</th>
+        </tr>
+        {% for event in undoneEntryList %}
+            <tr>
+            <th><input type="checkbox" disabled></th>
+            <th>{{event[0]}}</th>
+            </tr>
+        {% endfor %}
+
+        {% for event in doneEntryList %}
+            <tr>
+            <th><input type="checkbox" checked disabled></th>
+            <th>{{event[0]}}</th>
+            </tr>
+        {% endfor %}
+    </table>
+
     <form action="/checkedToDo", method="GET">
-        {% for event in entryList %}
-        {% if event[2] == 0 %}
-        <p>{{event[0]}}</p><br>
-        {% endfor %}
-
         <p>Check the ones that you have done below:</p>
-        <select name="ID">
-        {% for event in entryList %}
+        <select name="ID" required>
+            <option disabled>Choose Event..</option>
+            {% for event in undoneEntryList %}
             <option value={{event[1]}}>{{event[0]}}<br><br>
-        {% endfor %}
+            {% endfor %}
         </select>
-
-
         <input type="submit" value="Done!"> <br><br>
     </form>
+
     </body>
 
 

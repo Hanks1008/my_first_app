@@ -118,6 +118,7 @@ async def info(request: Request, Year: int, Month: str, Day: int):
     tempYear[0] = Year
     tempDay[0] = Day
 
+    suffix = initializeDateTime.getSuffix(Day)
 
     # check if it's today and pass in a different header set if it is
     if Year == todayYear and Month == todayMonthString and Day == todayDay:
@@ -126,22 +127,18 @@ async def info(request: Request, Year: int, Month: str, Day: int):
         instructWords = "Today's To-Dos include..."
     else:
         headerWords = "View To-Dos"
-        titleWords = f"Events for {Month} {Day} of {Year}"
-        instructWords = f"Events for {Month} {Day} of {Year} include..."
-
+        titleWords = f"Events for {Month} {Day}{suffix} of {Year}"
+        instructWords = f"Events for {Month} {Day}{suffix} of {Year} include..."
 
     if undoneEntryList == []:
-        finishedStringList=["Your to-dos are all done!"]
+        finishedStringList = ["Your to-dos are all done!"]
     else:
-        finishedStringList=[""]
-
-    print (finishedStringList)
+        finishedStringList = [""]
 
 
 
 
-
-    return templates.TemplateResponse("viewTodo.html", {"request": request, "Year": Year,
+    return templates.TemplateResponse("viewTodo.html", {"request": request, "Year": Year, "Suffix": suffix,
                                                         "Month": Month, "Day": Day, "doneEntryList": doneEntryList,
                                                         "undoneEntryList": undoneEntryList,
                                                         "headerWords": headerWords, "titleWords": titleWords,
@@ -153,30 +150,30 @@ async def info(request: Request, Year: int, Month: str, Day: int):
 @app.get("/checkedToDo", response_class=HTMLResponse)
 async def checked(request: Request, ID: int=Query(default=0), undoID: int=Query(default=0)):
 
+    eventList = []
+
     if ID:
         database.updateStatus(ID, 0)
-        eventChosen = database.fetchOneEvent(ID)[0][0]
-        event = eventChosen
+        eventList.append((database.fetchOneEvent(ID)[0][0], "Done"))
         Year = tempYear[0]
         Month = tempMonth[0]
         Day = tempDay[0]
-        doneString = "Done"
-        return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,
-                                                           "monthList": monthList, "dayList": dayList, "Event": event,
-                                                           "Month": Month, "Year": Year, "Day": Day, "todayDay": todayDay,
-                                                           "doneString": doneString,
-                                                           "todayYear": todayYear, "todayMonth": todayMonthString})
+        suffix = initializeDateTime.getSuffix(Day)
 
-    elif undoID:
+    if undoID:
         database.updateStatus(undoID, 1)
-        eventChosen = database.fetchOneEvent(undoID)[0][0]
-        event = eventChosen
+        eventList.append((database.fetchOneEvent(undoID)[0][0], "Undone"))
         Year = tempYear[0]
         Month = tempMonth[0]
         Day = tempDay[0]
-        undoneString = "Undone"
-        return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,
-                                                           "monthList": monthList, "dayList": dayList, "Event": event,
-                                                           "Month": Month, "Year": Year, "Day": Day,"todayDay": todayDay,
-                                                           "doneString": undoneString,
+        suffix = initializeDateTime.getSuffix(Day)
+
+    if ID or undoID:
+        return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,"suffix": suffix,
+                                                           "monthList": monthList, "dayList": dayList, "eventList": eventList,
+                                                           "tempMonthString": Month, "Year": Year, "Day": Day,"todayDay": todayDay,
                                                            "todayYear": todayYear, "todayMonth": todayMonthString})
+    else:
+        return "<center><h1>Error</h1>" \
+               "<p>At least choose an event..</p>" \
+               "<a href='/'>Back to main page</a></center>"

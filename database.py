@@ -85,7 +85,6 @@ def updateStatus(ID, status):
         after = 1
     elif status == 1:
         after = 0
-    print(after)
     cursor.execute(f"UPDATE event SET status={after} where entry_id = {ID}")
     connection.commit()
     connection.close()

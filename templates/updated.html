@@ -11,14 +11,16 @@
 
     <body>
     <h1>Updated  Successfully!</h1>
+    {%for event in eventList%}
     <p>
         <b>
             <i>
-                Status of "{{Event}}" for {{Month}} {{Day}} of {{Year}} has been updated to {{doneString}}!
+                Status of "{{event[0]}}" for {{tempMonthString}} {{Day}}{{suffix}} of {{Year}} has been updated to {{event[1]}}!
             </i>
         </b>
     </p>
     </body>
+    {% endfor %}
 
 
     <a href="/Info?Year={{todayYear}}&Month={{todayMonth}}&Day={{todayDay}}">View Today's List!</a>

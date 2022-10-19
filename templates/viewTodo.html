@@ -13,10 +13,12 @@
 
     <style>table, th, td {border:1px solid black;}</style>
     <table width="50%">
+
         <tr style="font-size: 20px">
             <th style="font-style: italic">Status</th>
             <th style="font-style: italic">Event</th>
         </tr>
+
         {% for event in undoneEntryList %}
             <tr>
             <th><input type="checkbox" disabled></th>
@@ -32,15 +34,34 @@
         {% endfor %}
     </table>
 
+    {% for entry in finished %}
+    <br>
+    <b><i>{{entry}}</i></b>
+    {% endfor %}
+
+
     <form action="/checkedToDo", method="GET">
         <p>Check the ones that you have done below:</p>
         <select name="ID" required>
-            <option disabled>Choose Event..</option>
+            <option disabled selected>Choose Event..</option>
             {% for event in undoneEntryList %}
             <option value={{event[1]}}>{{event[0]}}<br><br>
             {% endfor %}
         </select>
         <input type="submit" value="Done!"> <br><br>
+
+
+    <form action="/checkedToDo", method="GET">
+        <p>Check the ones that you want to undo below:</p>
+        <select name="undoID" required>
+            <option disabled selected>Choose Event..</option>
+            {% for event in doneEntryList %}
+            <option value={{event[1]}}>{{event[0]}}<br><br>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Done!"> <br><br>
+
+
     </form>
 
     </body>

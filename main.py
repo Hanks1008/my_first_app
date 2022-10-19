@@ -47,9 +47,9 @@ dayList = initializeDateTime.createDayList(todayYear, todayMonth)
 
 # creating temporary month, day, and year variables so that short-term memory can be saveed
 
-tempMonth = []
-tempYear = []
-tempDay = []
+tempMonth = [todayMonth]
+tempYear = [todayYear]
+tempDay = [todayDay]
 
 
 
@@ -74,7 +74,8 @@ async def results(request: Request, Year: int, Month: str, Day: int, Event: str)
     status = False
     database.insertNewEntry(Year, Month, Day, Event, status)  # saves this entry into the database
     return templates.TemplateResponse("results.html", {"request": request, "Year": Year, "Month": Month,
-                                                       "Day": Day, "Event": Event})
+                                                       "Day": Day, "Event": Event, "todayDay": todayDay,
+                                                       "todayMonth": todayMonthString, "todayYear": todayYear})
 
 # page that creates new event
 # important parameters that the user needs to input - date, status(defaulted to unfinished)
@@ -113,9 +114,9 @@ async def info(request: Request, Year: int, Month: str, Day: int):
         elif entry[2] == 0:
             undoneEntryList.append((entry[0], entry[1]))  # for undone events
 
-    tempMonth.append(Month)
-    tempYear.append(Year)
-    tempDay.append(Day)
+    tempMonth[0] = Month
+    tempYear[0] = Year
+    tempDay[0] = Day
 
 
     # check if it's today and pass in a different header set if it is
@@ -128,26 +129,54 @@ async def info(request: Request, Year: int, Month: str, Day: int):
         titleWords = f"Events for {Month} {Day} of {Year}"
         instructWords = f"Events for {Month} {Day} of {Year} include..."
 
+
+    if undoneEntryList == []:
+        finishedStringList=["Your to-dos are all done!"]
+    else:
+        finishedStringList=[""]
+
+    print (finishedStringList)
+
+
+
+
+
     return templates.TemplateResponse("viewTodo.html", {"request": request, "Year": Year,
                                                         "Month": Month, "Day": Day, "doneEntryList": doneEntryList,
                                                         "undoneEntryList": undoneEntryList,
                                                         "headerWords": headerWords, "titleWords": titleWords,
                                                         "instructWords": instructWords, "todayDay": todayDay,
-                                                        "todayYear": todayYear, "todayMonth": todayMonthString})
+                                                        "todayYear": todayYear, "todayMonth": todayMonthString,
+                                                        "finished": finishedStringList})
 
 
 @app.get("/checkedToDo", response_class=HTMLResponse)
-async def checked(request: Request, ID: int):
-    database.updateStatus(ID)
-    eventChosen = database.fetchOneEvent(ID)[0][0]
-    event = eventChosen
-    Year = tempYear[0]
-    Month = tempMonth[0]
-    Day = tempDay[0]
-    tempYear.pop(0)
-    tempMonth.pop(0)
-    tempDay.pop(0)
-    return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,
-                                                       "monthList": monthList, "dayList": dayList, "Event": event,
-                                                       "Month": Month, "Year": Year, "Day": Day, "todayDay": todayDay,
-                                                       "todayYear": todayYear, "todayMonth": todayMonthString})
+async def checked(request: Request, ID: int=Query(default=0), undoID: int=Query(default=0)):
+
+    if ID:
+        database.updateStatus(ID, 0)
+        eventChosen = database.fetchOneEvent(ID)[0][0]
+        event = eventChosen
+        Year = tempYear[0]
+        Month = tempMonth[0]
+        Day = tempDay[0]
+        doneString = "Done"
+        return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,
+                                                           "monthList": monthList, "dayList": dayList, "Event": event,
+                                                           "Month": Month, "Year": Year, "Day": Day, "todayDay": todayDay,
+                                                           "doneString": doneString,
+                                                           "todayYear": todayYear, "todayMonth": todayMonthString})
+
+    elif undoID:
+        database.updateStatus(undoID, 1)
+        eventChosen = database.fetchOneEvent(undoID)[0][0]
+        event = eventChosen
+        Year = tempYear[0]
+        Month = tempMonth[0]
+        Day = tempDay[0]
+        undoneString = "Undone"
+        return templates.TemplateResponse("updated.html", {"request": request, "futureYearList": futureYearList,
+                                                           "monthList": monthList, "dayList": dayList, "Event": event,
+                                                           "Month": Month, "Year": Year, "Day": Day,"todayDay": todayDay,
+                                                           "doneString": undoneString,
+                                                           "todayYear": todayYear, "todayMonth": todayMonthString})

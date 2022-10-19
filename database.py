@@ -78,11 +78,15 @@ def getEntry(Year, Month, Day):
 
 
 #updates an event's status
-def updateStatus(ID):
+def updateStatus(ID, status):
     connection = sql.connect("to_do_list_database.db")
     cursor = connection.cursor()
-
-    cursor.execute(f"UPDATE event SET status=1 where entry_id = {ID}")
+    if status == 0:
+        after = 1
+    elif status == 1:
+        after = 0
+    print(after)
+    cursor.execute(f"UPDATE event SET status={after} where entry_id = {ID}")
     connection.commit()
     connection.close()
 
